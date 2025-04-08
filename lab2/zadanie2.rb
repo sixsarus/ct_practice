@@ -1,25 +1,32 @@
 class StudentManager
-  FILE_NAME = 'students.txt'
+FILE_NAME = 'students.txt'
 
-  # Загружаем всех студентов
-  def index
-    if File.exist?(FILE_NAME)
-      File.read(FILE_NAME)
-    else
-      "Файл не найден"
+# Загружаем всех студентов
+def index
+  if File.exist?(FILE_NAME)
+    File.read(FILE_NAME)
+  else
+    "Файл не найден"
+  end
+end
+
+# Найти студента по ID (исправленная версия)
+def find(id)
+  student_data = []
+  found = false
+  
+  File.foreach(FILE_NAME) do |line|
+    if line.start_with?("#{id}.") || found
+      student_data << line
+      found = true
+      # Мы нашли 6 строк (1 заголовок + 5 данных)
+      break if student_data.size == 6
     end
   end
-
-  # Найти студента по ID
-  def find(id)
-    File.foreach(FILE_NAME) do |line|
-      if line.start_with?("#{id}.")
-        return line + 4.times.map { File.readline }.join
-      end
-    end
-    "Студент с ID #{id} не найден"
+  
+  student_data.empty? ? "Студент с ID #{id} не найден" : student_data.join
   rescue
-    "Ошибка при чтении файла"
+  "Ошибка при чтении файла"
   end
 
   # Найти студентов по паттерну
